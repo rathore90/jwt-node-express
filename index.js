@@ -1,6 +1,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
+const mongoose = require('mongoose');
 const dbConfig = require("./app/config/db.config");
 
 const app = express();
@@ -20,23 +21,22 @@ app.use(bodyParser.urlencoded({ extended: true }));
 const db = require("./app/models");
 const Role = db.role;
 
-db.mongoose
-  .connect(`mongodb://${dbConfig.HOST}:${dbConfig.PORT}/${dbConfig.DB}`, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-  })
-  .then(() => {
-    console.log("Successfully connect to MongoDB.");
-    initial();
-  })
-  .catch(err => {
-    console.error("Connection error", err);
-    process.exit();
-  });
+const CONNECTION_URL = 'mongodb+srv://pardeep_mern_stack:pardeep_mern_stack123@cluster0.n66oq.mongodb.net/node_jwt_auth?retryWrites=true&w=majority';
+
+mongoose.connect(CONNECTION_URL, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+}).then(() => {
+  console.log("Successfully connect to MongoDB.");
+  initial();
+}).catch(err => {
+  console.error("Connection error", err);
+  process.exit();
+});
 
 // simple route
 app.get("/", (req, res) => {
-  res.json({ message: "Welcome to bezkoder application." });
+  res.json({ message: "Welcome to my application." });
 });
 
 // routes
@@ -44,7 +44,7 @@ require("./app/routes/auth.routes")(app);
 require("./app/routes/user.routes")(app);
 
 // set port, listen for requests
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || 8081;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}.`);
 });
